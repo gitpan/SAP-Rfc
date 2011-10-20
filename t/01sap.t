@@ -58,14 +58,17 @@ sub getTable {
  my $flds = $if->tab('FIELDS')->structure();
  $if->FIELDS([{ 'FIELDNAME' => "MANDT"}, { 'FIELDNAME' => "MTEXT"}, { 'FIELDNAME' => "ORT01"}]);
  my $str = $rfc->structure('T000');
+ #warn Dumper($str)."\n";
  $rfc->callrfc($if);
  foreach my $row ($if->DATA()){
    #warn Dumper($row)."\n";
 	 if ($if->unicode){
+	   #warn "unicode\n";
      $str->value($row->{'WA'});
 	 } else {
      $str->value($row);
 	 }
+	 #warn $str->MANDT ."\n";
    $cnt += 1 if $str->MANDT eq '066';
  }
  $if->reset;

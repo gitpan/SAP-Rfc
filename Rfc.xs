@@ -748,6 +748,9 @@ SV* u16to8(char * string, int ilen) {
 	my_iconv_t myiconvt = alloc_iconv("UTF-16LE", "UTF-8");
   perl_str = u_doconv16to8str(myiconvt->iconv_handle, string, ilen, myiconvt->is_target_utf8);
 	dealloc_iconv(myiconvt);
+#ifdef SvUTF8_on
+	SvUTF8_on(perl_str);
+#endif
 	return perl_str;
 }
 
@@ -1002,7 +1005,7 @@ SV* MyGetStructure(SV* sv_handle, SV* sv_structure, SV* sv_vers){
 	     sprintfU(errstr, cU("EXCEPT\t%s\tGROUP\t%d\tKEY\t%s\tMESSAGE\t%s"),cU("RfcGetStructureInfoAsTable"), error_info.group, error_info.key, error_info.message);
      };
 		 //fprintfU(stderr,cU("%s"), errstr);
-		 croak("%s", u16to8((char *) errstr, strlenU(errstr)*2));
+		 croak("%s", SvPV_nolen(u16to8((char *) errstr, strlenU(errstr)*2)));
 		 //exit(-1);
    };
 
@@ -1461,7 +1464,7 @@ SV* MySysinfo(SV* sv_handle){
      };
 		 //fprintfU(stderr,cU("%s"), errstr);
 #ifdef SAPwithUNICODE
-		 croak("%s", u16to8((char *) errstr, strlenU(errstr)*2));
+		 croak("%s", SvPV_nolen(u16to8((char *) errstr, strlenU(errstr)*2)));
 #else
 		 croak("%s", errstr);
 #endif
@@ -1535,7 +1538,7 @@ SV* MyGetInterface(SV* sv_handle, SV* sv_function){
      };
 		 //fprintfU(stderr,cU("%s"), errstr);
 #ifdef SAPwithUNICODE
-		 croak("%s", u16to8((char *) errstr, strlenU(errstr)*2));
+		 croak("%s", SvPV_nolen(u16to8((char *) errstr, strlenU(errstr)*2)));
 #else
 		 croak("%s", errstr);
 #endif
